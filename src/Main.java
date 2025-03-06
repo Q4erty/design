@@ -8,24 +8,45 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Product laptop = new Product("MacBook", 1999.99, true);
-        Customer alice = new Customer("Alice");
+        Product phone = new Product("Samsung Galaxy S24", 500000, true);
+        Product laptop = new Product("Asus ROG", 1200000, true);
 
-        Notification notification = new PremiumMessageDecorator(new EmailNotification(new BasicNotification(alice.getName())));
+        Customer aizhan = new Customer("Aizhan");
+        Customer nurboll = new Customer("Nurboll");
+        Customer yermek = new Customer("Yermek");
 
-        alice.setNotification(notification);
+        Notification emailNotification = new EmailNotification(new BasicNotification(aizhan.getName()));
+        Notification smsNotification = new SMSNotification(new BasicNotification(nurboll.getName()));
+        Notification premiumNotification = new PremiumMessageDecorator(new EmailNotification(new BasicNotification(yermek.getName())));
 
-        alice.subscribeToProduct(laptop, NotificationType.PRICE);
+        aizhan.setNotification(emailNotification);
+        nurboll.setNotification(smsNotification);
+        yermek.setNotification(premiumNotification);
+
+        aizhan.subscribeToProduct(phone, NotificationType.PRICE);
+        nurboll.subscribeToProduct(phone, NotificationType.AMOUNT);
+        yermek.subscribeToProduct(phone, NotificationType.BOTH);
 
         BeautifulConsole.printLine();
-        laptop.setPrice(1899.99);
+        phone.setPrice(450000);
 
-        Customer bob = new Customer("Bob");
-        bob.setNotification(new SMSNotification(new BasicNotification(bob.getName())));
+        nurboll.unsubscribeFromProduct(phone);
+        yermek.unsubscribeFromProduct(phone);
+        aizhan.changePreferences(phone, NotificationType.AMOUNT);
 
-        bob.subscribeToProduct(laptop, NotificationType.BOTH);
+        phone.setPrice(400000);
 
         BeautifulConsole.printLine();
-        Product.sendAnnouncement("New products arriving!", List.of(laptop));
+        phone.setInStock(false);
+        phone.setInStock(true);
+
+        aizhan.subscribeToProduct(laptop, NotificationType.BOTH);
+        nurboll.subscribeToProduct(laptop, NotificationType.PRICE);
+
+        BeautifulConsole.printLine();
+        laptop.setPrice(1150000);
+
+        BeautifulConsole.printLine();
+        Product.sendAnnouncement("Soon new iPhone 16 in sale", List.of(phone, laptop));
     }
 }

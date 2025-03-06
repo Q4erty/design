@@ -13,8 +13,8 @@ public class Customer {
         this.notification = new BasicNotification(name);
     }
 
-    public void update(String msg) {
-        notification.send(msg);
+    public void update(String message) {
+        notification.send(message);
     }
 
     public void subscribeToProduct(Product product, NotificationType... preferences) {
@@ -28,7 +28,10 @@ public class Customer {
     }
 
     public void changePreferences(Product product, NotificationType... newPreferences) {
-        subs.put(product, new HashSet<>(Arrays.asList(newPreferences)));
+        if (subs.containsKey(product)) {
+            product.removeSubscriber(this);
+            product.addSubscriber(this, newPreferences);
+        }
     }
 
     public void setNotification(Notification notification) {
